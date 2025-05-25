@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
+import os
 import pickle
-from text_preprocessing import custom_preprocessor, custom_tokenizer  # Required for unpickling
+from text_preprocessing import custom_preprocessor, custom_tokenizer  # Needed for unpickling
 
 app = Flask(__name__)
-CORS(app)  # Allow all origins (you can restrict this)
+CORS(app)  # Enable CORS for all routes
 
 # Load model and vectorizer
 with open('book_review_svm.pkl', 'rb') as f:
@@ -32,4 +33,6 @@ def predict():
     return jsonify({"sentiment": label})
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=3000, debug=True)
+    # Get PORT from environment (for production), fallback to 3000 for local dev
+    port = int(os.environ.get('PORT', 3000))
+    app.run(host='0.0.0.0', port=port)
